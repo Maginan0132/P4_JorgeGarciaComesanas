@@ -4,8 +4,9 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class Entity: MonoBehaviour
 {
-    private Health health;
+    protected Health health;
 
+    public Health Health { get => health; set => health = value; }
     public Entity()
     {
         health = new Health();
@@ -18,6 +19,7 @@ public class Entity: MonoBehaviour
 
     public void Awake()
     {
+        health = new Health();
         health.OnDeath += Death;
     }
 
@@ -26,12 +28,12 @@ public class Entity: MonoBehaviour
         Move();
     }
 
-    public virtual void Death()
+    protected virtual void Death()
     {
         Debug.Log("Entity has died.");
     }
 
-    public virtual void Move()
+    protected virtual void Move()
     {
         Debug.Log("Entity is moving.");
     }

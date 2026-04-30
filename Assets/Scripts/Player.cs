@@ -13,6 +13,7 @@ public class Player: Entity
 
     public void Start()
     {
+        GameManager.INSTANCE.PlayerHealth = health;
         rb = GetComponent<Rigidbody>();
         camTransform = GetComponentInChildren<Camera>().transform;
         Cursor.lockState = CursorLockMode.Locked;
@@ -32,23 +33,35 @@ public class Player: Entity
 
     private void OnCollisionEnter(Collision collision)
     {
-        if(collision.gameObject.CompareTag("Suelo"))
+        if(collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = true;
+        }
+        else if(collision.gameObject.CompareTag("Enemy"))
+        {
+            health.TakeDamage(10);
         }
     }
 
     private void OnCollisionExit(Collision collision)
     {
-        if(collision.gameObject.CompareTag("Suelo"))
+        if(collision.gameObject.CompareTag("Ground"))
         {
             isGrounded = false;
         }
     }
-    public override void Move()
+
+    private void OnTriggerEnter(Collider other)
     {
-        float hor = Input.GetAxis("Horizontal");
-        float ver = Input.GetAxis("Vertical");
+        if(other.CompareTag("Goal"))
+        {
+            GameManager.INSTANCE.Victory();
+        }
+    }
+    protected override void Move()
+    {
+        float hor = Input.GetAxisRaw("Horizontal");
+        float ver = Input.GetAxisRaw("Vertical");
 
         Vector3 movDirection = transform.right * hor + transform.forward * ver;
 
@@ -63,7 +76,7 @@ public class Player: Entity
         }
     }
 
-    public override void Death()
+    protected override void Death()
     {
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
     }    
